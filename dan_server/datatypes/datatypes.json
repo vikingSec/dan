@@ -1,0 +1,25 @@
+{
+	"types":[
+		{
+			"name":"testdatatype",
+			"fields": [
+				{
+					"name":"url",
+					"type":"url"
+				},
+				{
+					"name":"username",
+					"type":"string"
+				},
+				{
+					"name":"postbody",
+					"type":"string"
+				}
+			]
+		
+		}
+
+	]
+
+
+}
