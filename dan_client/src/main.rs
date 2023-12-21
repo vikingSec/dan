@@ -60,8 +60,7 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
             style: Style {
                 width: Val::Percent(100.0),
                 height: Val::Percent(100.0),
-                align_items: AlignItems::Center,
-                justify_content: JustifyContent::Center,
+                align_items: AlignItems::End,
                 ..default()
             },
             ..default()
@@ -77,6 +76,8 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
                         justify_content: JustifyContent::Center,
                         // vertically center child text
                         align_items: AlignItems::Center,
+                        
+                        margin: UiRect {left: Val::Px(10.0), bottom: Val::Px(10.), ..default()},
                         ..default()
                     },
                     border_color: BorderColor(Color::BLACK),
