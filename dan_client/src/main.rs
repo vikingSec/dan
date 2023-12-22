@@ -8,7 +8,7 @@
 #![allow(clippy::type_complexity)]
 
 use bevy::prelude::*;
-
+mod node;
 
 
 const NORMAL_BUTTON: Color = Color::rgb(0.15, 0.15, 0.15);
@@ -26,6 +26,7 @@ fn button_system(
         (Changed<Interaction>, With<Button>),
     >,
     mut text_query: Query<&mut Text>,
+    mut cmd : Commands
 ) {
     for (interaction, mut color, mut border_color, children) in &mut interaction_query {
         println!("Interaction loop");
@@ -36,6 +37,7 @@ fn button_system(
                 text.sections[0].value = "Press".to_string();
                 *color = PRESSED_BUTTON.into();
                 border_color.0 = Color::RED;
+                node::Node::SpawnNode(&mut cmd);
             }
             Interaction::Hovered => {
                 text.sections[0].value = "Hover".to_string();
