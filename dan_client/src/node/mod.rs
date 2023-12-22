@@ -17,6 +17,23 @@ pub enum NodeType {
     Node
 }
 const NORMAL_BUTTON: Color = Color::rgb(0.15, 0.15, 0.15);
+
+
+// Private utility functions
+fn InBoundingBox(cursor_pos : Vec2, bounding_box : Rect) -> bool {
+    if(cursor_pos.x < bounding_box.max[0] &&
+       cursor_pos.x > bounding_box.min[0] &&
+       cursor_pos.y < bounding_box.max[1] &&
+       cursor_pos.y > bounding_box.min[1])
+    {
+        return true;
+    }
+    return false;
+
+
+}
+
+
 impl Node {
     pub fn SpawnNode(cmd : &mut Commands, asset_server : &Res<AssetServer>){
         cmd.spawn((SpriteBundle {
@@ -81,6 +98,7 @@ impl Node {
     cameras: Query<(&Camera, &GlobalTransform)>)
     {
         let window = windows.single();
+        
         let (camera, position) = cameras.single();
         for (transform, image_handle) in &mut sprites {
             let image_size = assets
@@ -98,10 +116,7 @@ impl Node {
                     .and_then(|cursor| camera.viewport_to_world(position, cursor))
                         .map(|ray| ray.origin.truncate())
                         {
-                            if(world_position.x < bounding_box.max[0] &&
-                               world_position.x > bounding_box.min[0] &&
-                               world_position.y < bounding_box.max[1] &&
-                               world_position.y > bounding_box.min[1])
+                            if(InBoundingBox(world_position, bounding_box))
                             {
                                 info!("Clicked the sprite!!!");
                             }
