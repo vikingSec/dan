@@ -26,7 +26,8 @@ fn button_system(
         (Changed<Interaction>, With<Button>),
     >,
     mut text_query: Query<&mut Text>,
-    mut cmd : Commands
+    mut cmd : Commands,
+    asset_server : Res<AssetServer>
 ) {
     for (interaction, mut color, mut border_color, children) in &mut interaction_query {
         println!("Interaction loop");
@@ -37,7 +38,7 @@ fn button_system(
                 text.sections[0].value = "Press".to_string();
                 *color = PRESSED_BUTTON.into();
                 border_color.0 = Color::RED;
-                node::Node::SpawnNode(&mut cmd);
+                node::Node::SpawnNode(&mut cmd, &asset_server);
             }
             Interaction::Hovered => {
                 text.sections[0].value = "Hover".to_string();
@@ -106,7 +107,9 @@ fn main(){
     App::new()
         .add_plugins(DefaultPlugins)
         .add_systems(Update, button_system)
+        .add_systems(Update, node::Node::ClickSprite)
         .add_systems(Update, node::Node::NodeSystem)
+        .add_systems(Update, node::Node::MoveSystem)
         .add_systems(Startup, setup)
         .run()
 }
