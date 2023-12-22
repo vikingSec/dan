@@ -14,9 +14,11 @@ impl Node {
             style: Style {
                 width: Val::Px(150.0),
                 height: Val::Px(150.0),
+                position_type: PositionType::Absolute,
                 ..Default::default()
             },
             background_color: NORMAL_BUTTON.into(),
+            transform: Transform::from_xyz(15.0,15.0,15.0),
             ..Default::default()
         });
 
@@ -31,11 +33,10 @@ impl Node {
             ),
             (Changed<Interaction>, With<Button>),
             >,
-            mut text_query: Query<&mut Text>,
+            mut node_query: Query<&mut Style, With<Button>>,
             mut cmd : Commands
         ){
 
-        // TODO
         for (interaction, mut color) in &mut interaction_query {
             println!("Interaction loop");
             match *interaction {
@@ -51,5 +52,7 @@ impl Node {
                 }
             }
         }
+    
+        //TODO: Here we need to create some sort of collision system. That shit seems hard lol
     }
 }
