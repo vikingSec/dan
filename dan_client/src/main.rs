@@ -106,6 +106,7 @@ fn main(){
     App::new()
         .add_plugins(DefaultPlugins)
         .add_systems(Update, button_system)
+        .add_systems(Update, node::Node::NodeSystem)
         .add_systems(Startup, setup)
         .run()
 }

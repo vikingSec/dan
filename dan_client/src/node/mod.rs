@@ -22,5 +22,34 @@ impl Node {
 
 
     }
+    pub fn NodeSystem(
+        
+        mut interaction_query: Query<
+        (
+            &Interaction,
+            &mut BackgroundColor,
+            ),
+            (Changed<Interaction>, With<Button>),
+            >,
+            mut text_query: Query<&mut Text>,
+            mut cmd : Commands
+        ){
 
+        // TODO
+        for (interaction, mut color) in &mut interaction_query {
+            println!("Interaction loop");
+            match *interaction {
+                Interaction::Pressed => {
+                    println!("Pressed the node!");
+                    *color = BackgroundColor(Color::rgb(0.9, 0.9, 0.9));
+                },
+                Interaction::Hovered => {
+                    println!("Hovered!");
+                },
+                Interaction::None => {
+                    println!("None!");
+                }
+            }
+        }
+    }
 }
