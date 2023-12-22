@@ -8,14 +8,12 @@ use bevy::sprite::Anchor;
 
 pub struct Node;
 #[derive(Component)]
-pub struct SizeXY {
-    x: f32,
-    y: f32
+pub struct Meta {
+    Name: String,
+    Type: NodeType,
 }
-
-
 #[derive(Component)]
-pub enum Type {
+pub enum NodeType {
     Node
 }
 const NORMAL_BUTTON: Color = Color::rgb(0.15, 0.15, 0.15);
@@ -28,7 +26,10 @@ impl Node {
 
             ..Default::default()
         },
-        Type::Node,
+        Meta {
+            Name: "DefaultNode".to_string(),
+            Type: NodeType::Node
+        },
         ));
         println!("Spawned!");
 
@@ -39,15 +40,15 @@ impl Node {
         (
             &Interaction,
             &mut Transform,
-            &mut Type
+            &mut Meta
             ),
             (Changed<Interaction>, With<Sprite>),
             >,
             mut cmd : Commands,
         ){
-        for (interaction, mut trans, mut ty) in &interaction_query {
-            match *ty {
-                Type::Node => {
+        for (interaction, mut trans, mut meta) in &interaction_query {
+            match meta.Type {
+                NodeType::Node => {
                     println!("Interaction loop");
                     match *interaction {
                         Interaction::Pressed => {
@@ -66,10 +67,10 @@ impl Node {
         //TODO: Here we need to create some sort of collision system. That shit seems hard lo
 
     }
-    pub fn MoveSystem(time: Res<Time>, mut node_query: Query<(&mut Transform, &mut Type)>){
-        for (mut transform, mut ty) in &mut node_query {
-            match *ty {
-                Type::Node => transform.translation.x += 15. * time.delta_seconds(),
+    pub fn MoveSystem(time: Res<Time>, mut node_query: Query<(&mut Transform, &mut Meta)>){
+        for (mut transform, mut meta) in &mut node_query {
+            match meta.Type {
+                NodeType::Node => transform.translation.x += 15. * time.delta_seconds(),
             }
         }
     }
