@@ -8,7 +8,7 @@
 #![allow(clippy::type_complexity)]
 
 use bevy::prelude::*;
-
+mod node;
 
 
 const NORMAL_BUTTON: Color = Color::rgb(0.15, 0.15, 0.15);
@@ -26,6 +26,8 @@ fn button_system(
         (Changed<Interaction>, With<Button>),
     >,
     mut text_query: Query<&mut Text>,
+    mut cmd : Commands,
+    asset_server : Res<AssetServer>
 ) {
     for (interaction, mut color, mut border_color, children) in &mut interaction_query {
         println!("Interaction loop");
@@ -36,6 +38,7 @@ fn button_system(
                 text.sections[0].value = "Press".to_string();
                 *color = PRESSED_BUTTON.into();
                 border_color.0 = Color::RED;
+                node::Node::SpawnNode(&mut cmd, &asset_server);
             }
             Interaction::Hovered => {
                 text.sections[0].value = "Hover".to_string();
@@ -60,8 +63,7 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
             style: Style {
                 width: Val::Percent(100.0),
                 height: Val::Percent(100.0),
-                align_items: AlignItems::Center,
-                justify_content: JustifyContent::Center,
+                align_items: AlignItems::End,
                 ..default()
             },
             ..default()
@@ -77,6 +79,8 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
                         justify_content: JustifyContent::Center,
                         // vertically center child text
                         align_items: AlignItems::Center,
+                        
+                        margin: UiRect {left: Val::Px(10.0), bottom: Val::Px(10.), ..default()},
                         ..default()
                     },
                     border_color: BorderColor(Color::BLACK),
@@ -103,6 +107,9 @@ fn main(){
     App::new()
         .add_plugins(DefaultPlugins)
         .add_systems(Update, button_system)
+        .add_systems(Update, node::Node::ClickSprite)
+        .add_systems(Update, node::Node::NodeSystem)
+        .add_systems(Update, node::Node::MoveSystem)
         .add_systems(Startup, setup)
         .run()
 }
