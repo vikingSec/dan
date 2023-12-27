@@ -3,14 +3,17 @@ use bevy::input::mouse::MouseButtonInput;
 use bevy::window::PrimaryWindow;
 use bevy::{prelude::*, ecs::system::Command};
 use bevy::sprite::Anchor;
+use std::time;
 
 
 
 pub struct Node;
+
 #[derive(Component)]
 pub struct Meta {
     Name: String,
     Type: NodeType,
+    Id: String
 }
 #[derive(Component)]
 pub enum NodeType {
@@ -33,9 +36,19 @@ fn InBoundingBox(cursor_pos : Vec2, bounding_box : Rect) -> bool {
 
 }
 
+fn getId() -> String {
+    let start = time::SystemTime::now();
+
+    let since_the_epoch = start
+        .duration_since(time::UNIX_EPOCH)
+        .expect("Shit happened...");
+    return format!("{:?}", since_the_epoch.as_millis());
+}
 
 impl Node {
     pub fn SpawnNode(cmd : &mut Commands, asset_server : &Res<AssetServer>){
+        let id = getId();
+        let name = format!("node_gen_{}", id);
         cmd.spawn((SpriteBundle {
             texture: asset_server.load("icon.png"), 
             transform: Transform::from_xyz(100., 0., 0.),
@@ -44,8 +57,9 @@ impl Node {
             ..Default::default()
         },
         Meta {
-            Name: "DefaultNode".to_string(),
-            Type: NodeType::Node
+            Name:  name.to_string(),
+            Type: NodeType::Node, 
+            Id: getId()
         },
         ));
         println!("Spawned!");
@@ -91,7 +105,7 @@ impl Node {
             }
         }
     }
-    pub fn ClickSprite(mut sprites: Query<(&Transform, &Handle<Image>), With<Sprite>>,
+    pub fn ClickSprite(mut sprites: Query<(&Transform, &Handle<Image>, &Meta), With<Sprite>>,
     assets: Res<Assets<Image>>,
     windows: Query<&Window>,
     buttons: Res<Input<MouseButton>>,
@@ -100,7 +114,7 @@ impl Node {
         let window = windows.single();
         
         let (camera, position) = cameras.single();
-        for (transform, image_handle) in &mut sprites {
+        for (transform, image_handle, meta) in &mut sprites {
             let image_size = assets
                 .get(image_handle)
                 .unwrap_or(&Image {..Default::default()})
@@ -118,7 +132,7 @@ impl Node {
                         {
                             if(InBoundingBox(world_position, bounding_box))
                             {
-                                info!("Clicked the sprite!!!");
+                                info!("Clicked the sprite with ID {} and name {}!!", meta.Id, meta.Name);
                             }
                         }
             }
