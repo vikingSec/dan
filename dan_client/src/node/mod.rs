@@ -4,7 +4,7 @@ use bevy::window::PrimaryWindow;
 use bevy::{prelude::*, ecs::system::Command};
 use bevy::sprite::Anchor;
 use std::time;
-
+use bevy::sprite::collide_aabb::collide;
 
 
 pub struct Node;
@@ -96,14 +96,6 @@ impl Node {
             }
         }
         //TODO: Here we need to create some sort of collision system. That shit seems hard lo
-
-    }
-    pub fn MoveSystem(time: Res<Time>, mut node_query: Query<(&mut Transform, &mut Meta)>){
-        for (mut transform, mut meta) in &mut node_query {
-            match meta.Type {
-                NodeType::Node => transform.translation.x += 15. * time.delta_seconds(),
-            }
-        }
     }
     pub fn ClickSprite(mut sprites: Query<(&Transform, &Handle<Image>, &Meta), With<Sprite>>,
     assets: Res<Assets<Image>>,
@@ -136,6 +128,28 @@ impl Node {
                             }
                         }
             }
+        }
+
+    }
+
+    pub fn HandleCollisions(mut spriteschange: Query<(&mut Transform, &Meta), With<Sprite>>)
+    {
+        let mut combos = spriteschange.iter_combinations_mut();
+        while let Some([(mut trans1, mut meta1), (mut trans2, mut meta2)]) = combos.fetch_next() {
+            if(meta1.Id != meta2.Id){
+                let collision = collide(
+                        trans1.translation,
+                        trans1.scale.truncate(),
+                        trans2.translation,
+                        trans2.scale.truncate()
+                    );
+                if let Some(collision) = collision {
+                    trans1.translation.x += 256.;
+                    trans1.translation.y += 256.;
+                    println!("There was a collision!");
+                }
+            }
+
         }
 
     }

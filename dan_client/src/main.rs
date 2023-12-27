@@ -109,7 +109,7 @@ fn main(){
         .add_systems(Update, button_system)
         .add_systems(Update, node::Node::ClickSprite)
         .add_systems(Update, node::Node::NodeSystem)
-        .add_systems(Update, node::Node::MoveSystem)
+        .add_systems(Update, node::Node::HandleCollisions)
         .add_systems(Startup, setup)
         .run()
 }
