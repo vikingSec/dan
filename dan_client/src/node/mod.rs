@@ -136,18 +136,16 @@ impl Node {
     {
         let mut combos = spriteschange.iter_combinations_mut();
         while let Some([(mut trans1, mut meta1), (mut trans2, mut meta2)]) = combos.fetch_next() {
-            if(meta1.Id != meta2.Id){
-                let collision = collide(
-                        trans1.translation,
-                        trans1.scale.truncate(),
-                        trans2.translation,
-                        trans2.scale.truncate()
-                    );
-                if let Some(collision) = collision {
-                    trans1.translation.x += 256.;
-                    trans1.translation.y += 256.;
-                    println!("There was a collision!");
-                }
+            let collision = collide(
+                trans1.translation,
+                trans1.scale.truncate(),
+                trans2.translation,
+                trans2.scale.truncate()
+                );
+            if let Some(collision) = collision {
+                trans1.translation.x += 256.;
+                trans1.translation.y += 256.;
+                println!("There was a collision!");
             }
 
         }
