@@ -52,16 +52,35 @@ impl Node {
         cmd.spawn((SpriteBundle {
             texture: asset_server.load("icon.png"), 
             transform: Transform::from_xyz(100., 0., 0.),
-            
-
             ..Default::default()
+            
         },
         Meta {
             Name:  name.to_string(),
             Type: NodeType::Node, 
             Id: getId()
-        },
-        ));
+        }
+        )).with_children(|parent| {
+            parent.spawn(Text2dBundle {
+                text: Text::from_section(
+                    &name,
+                    TextStyle {
+                        font: asset_server.load("fonts/FiraSans-Bold.ttf"),
+                        color: Color::rgb(0.9, 0., 0.),
+                        font_size: 40.0,
+                        ..default()
+                    }
+                ),
+                transform: Transform {
+                    translation: Vec3::new(0.0,0.0,0.1),
+                    ..default()
+                },
+                ..default()
+            }
+            );
+            println!("Spawned text bundle with name {}", name);
+
+        });
         println!("Spawned!");
 
     }
